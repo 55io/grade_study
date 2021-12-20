@@ -1,0 +1,31 @@
+version: '3'
+services:
+
+  php:
+    build: docker/php
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: chown -R :www-data /app
+    command: chmod -R 777 /app
+    command: php-fpm
+    ports:
+      - "9005:9000"
+    networks:
+      - grade-local
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports:
+      - "9090:80"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - php
+    networks:
+      - grade-local
+
+networks:
+  grade-local:
+    driver: bridge
